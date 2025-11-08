@@ -4,21 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Викторина: Знатоки Хакасии</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- 
+      Я использую простой стиль (style.css), который мы выбрали.
+      Если вы назвали свой CSS-файл по-другому, поменяйте 'style.css'.
+    -->
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
 
     <div class="container">
         
+        <!-- Экран 1: Старт -->
         <div id="start-screen" class="screen active">
             <div class="header">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Coat_of_Arms_of_Khakassia.svg/120px-Coat_of_Arms_of_Khakassia.svg.png" alt="Герб Хакасии" class="logo">
+                <!-- 
+                  ! ИЗМЕНЕНИЕ:
+                  ! Теперь изображение загружается из локального файла.
+                  ! Убедитесь, что файл 'Coat_of_arms_of_Khakassia.svg.png' 
+                  ! загружен на GitHub в ту же папку, что и этот index.html
+                -->
+                <img src="Coat_of_arms_of_Khakassia.svg.png" alt="Герб Хакасии" class="logo">
                 <h1>Знатоки Хакасии</h1>
             </div>
+
+            <!-- Текст с вашего скриншота -->
             <p>Приглашаем вас принять участие в захватывающей онлайн-викторине, посвящённой богатству и разнообразию традиционной хакасской культуры.</p>
-    <p>Хакасия – уникальный регион, бережно сохраняющий древнейшие традиции, оригинальные обычаи и особый национальный колорит. Проверьте свои знания, откройте для себя новые грани культурного наследия республики!</p>
-    <p class="rules">Принять участие в викторине могут ребята до 15 лет включительно. Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
-    <p class="rules"><strong>Желаем удачи!</strong></p>
+            <p>Хакасия – уникальный регион, бережно сохраняющий древнейшие традиции, оригинальные обычаи и особый национальный колорит. Проверьте свои знания, откройте для себя новые грани культурного наследия республики!</p>
+            <p class="rules">Принять участие в викторине могут ребята до 15 лет включительно. Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
+            <p class="rules"><strong>Желаем удачи!</strong></p>
+            
             <form id="user-form">
                 <div class="input-group">
                     <label for="user-name">Ваше имя:</label>
@@ -32,34 +46,46 @@
             </form>
         </div>
 
+        <!-- Экран 2: Викторина -->
         <div id="quiz-screen" class="screen">
             <div class="quiz-header">
-                <div id="question-counter">Вопрос 1 / 28</div>
+                <div id="question-counter">Вопрос 1 / 30</div>
                 <div id="timer">00:00</div>
             </div>
             <h2 id="question-text"></h2>
             <div id="options-container">
-                </div>
+                <!-- Кнопки с вариантами ответов будут здесь -->
+            </div>
         </div>
 
+        <!-- Экран 3: Результаты -->
         <div id="results-screen" class="screen">
             <h2>Ваши результаты</h2>
             <p>Поздравляем, <strong id="result-name"></strong>!</p>
             <ul class="results-summary">
                 <li><strong>Возраст:</strong> <span id="result-age"></span> лет</li>
-                <li><strong>Правильные ответы:</strong> <span id="result-score"></span> из 28</li>
+                <li><strong>Правильные ответы:</strong> <span id="result-score"></span> из 30</li>
                 <li><strong>Затраченное время:</strong> <span id="result-time"></span></li>
             </ul>
             <p>Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
             <button class="btn" id="restart-btn">Попробовать снова</button>
+            
+            <!-- Заметка о бэкенде, которую можно удалить, но она полезна для вас -->
             <div class="leaderboard-note">
-                <p><strong>Примечание для администратора:</strong><br>
-                Чтобы создать общую таблицу лидеров, вам необходимо настроить бэкенд (сервер и базу данных) для сбора этих результатов.</p>
+                <p><strong>Примечание:</strong><br>
+                Ваш результат был успешно отправлен в базу данных.
+                </p>
             </div>
         </div>
-
     </div>
 
-    <script src="script.js"></script>
+    <!-- 
+      !
+      ! ВОТ ИСПРАВЛЕНИЕ:
+      ! Я добавил type="module"
+      !
+    -->
+    <script type="module" src="script.js"></script>
+
 </body>
 </html>
