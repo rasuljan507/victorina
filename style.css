@@ -1,0 +1,232 @@
+/*
+ * БОЛЕЕ ПРОСТОЙ И СТРОГИЙ СТИЛЬ (style-simple.css)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap');
+
+/* Базовые цвета (спокойная палитра) */
+:root {
+    --primary-color: #004A99; /* Спокойный синий */
+    --secondary-color: #EAEAEA; /* Светло-серый фон */
+    --bg-color: #F8F8F8;
+    --text-color: #333333;
+    --white: #FFFFFF;
+    --border-color: #DDDDDD;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.container {
+    background-color: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Легкая тень */
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+}
+
+.screen {
+    padding: 20px 25px;
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* --- Экран 1: Старт --- */
+#start-screen .header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 15px;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+}
+
+#start-screen p {
+    text-align: left;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+#start-screen p.rules {
+    font-size: 0.9rem;
+    background-color: var(--secondary-color);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    /* Убраны переходы (transition) для "нединамичности" */
+}
+
+.btn:hover {
+    background-color: #003B7A; /* Простое затемнение при наведении */
+}
+
+/* --- Экран 2: Викторина --- */
+.quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#timer {
+    background-color: var(--secondary-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+#question-text {
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    min-height: 60px;
+}
+
+#options-container .option {
+    display: block;
+    width: 100%;
+    background-color: var(--white);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    padding: 14px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+#options-container .option:hover {
+    background-color: #F9F9F9; /* Легкое выделение */
+}
+
+#options-container .option.correct {
+    background-color: #E8F5E9; /* Зеленый */
+    border-color: #4CAF50;
+}
+
+#options-container .option.incorrect {
+    background-color: #FFEBEE; /* Красный */
+    border-color: #F44336;
+}
+
+#options-container .option:disabled {
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+/* --- Экран 3: Результаты --- */
+#results-screen h2 {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+}
+
+#results-screen p {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.results-summary {
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    padding: 20px;
+    list-style: none;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.results-summary li {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+.results-summary li:last-child {
+    margin-bottom: 0;
+}
+
+#restart-btn {
+    background-color: #6C757D; /* Серый */
+    color: var(--white);
+}
+#restart-btn:hover {
+    background-color: #5A6268;
+}
+
+.leaderboard-note {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #777;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
