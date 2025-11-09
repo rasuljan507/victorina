@@ -7,11 +7,15 @@
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; }
-        #loading { text-align: center; font-size: 1.2em; padding: 20px; }
-        table { width: 100%; max-width: 1000px; margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        #loading { text-align: center; font-size: 1.2em; }
+        table { width: 100%; max-width: 1200px; /* ! Увеличил ширину */ margin: 20px auto; border-collapse: collapse; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         th, td { border: 1px solid #ddd; padding: 12px 15px; text-align: left; }
         th { background-color: #004A99; color: white; cursor: pointer; }
         tr:nth-child(even) { background-color: #f9f9f9; }
+        /* ! Стиль для мобильных - разрешаем горизонтальный скролл */
+        @media (max-width: 768px) {
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+        }
     </style>
 </head>
 <body>
@@ -19,11 +23,15 @@
     <h1>Результаты викторины "Знатоки Хакасии"</h1>
     <p id="loading">Загрузка результатов...</p>
     
-    <table id="results-table" style="display:none;">
+    <table id="results-table">
         <thead>
             <tr>
                 <th data-sort="name">Имя</th>
                 <th data-sort="age">Возраст</th>
+                <!-- ! НОВЫЕ КОЛОНКИ -->
+                <th>Телефон</th>
+                <th>Адрес</th>
+                <!-- ! КОНЕЦ НОВЫХ КОЛОНОК -->
                 <th data-sort="score">Счет (из 30)</th>
                 <th data-sort="time">Время (мм:сс)</th>
                 <th data-sort="timestamp">Дата</th>
@@ -35,12 +43,9 @@
     </table>
 
     <!-- 
-      ! ВАЖНО: 
-      ! Мы подключаем results.js как "module". 
-      ! Он сам импортирует Firebase изнутри.
+      ! ВАЖНО: Подключаем Firebase SDK (Модульная v9+)
     -->
     <script type="module" src="results.js"></script>
 
 </body>
-
 </html>
