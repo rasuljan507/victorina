@@ -1,89 +1,80 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Викторина: Знатоки Хакасии</title>
-    <!-- Подключаем стили (ты можешь использовать любой из .css, что я давал) -->
-    <link rel="stylesheet" href="style.css"> 
-</head>
-<body>
+// --- ВАШ КОНФИГ FIREBASE (v9+ Модульный) ---
+// Импортируем только то, что нужно
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-    <div class="container">
+// Ваш конфиг
+const firebaseConfig = {
+    apiKey: "AIzaSyBvuOY_EZ_PyABGvLU9_5LcthFPkkF6nhE",
+    authDomain: "victorina-7ef9b.firebaseapp.com",
+    projectId: "victorina-7ef9b",
+    storageBucket: "victorina-7ef9b.firebasestorage.app",
+    messagingSenderId: "881919211027",
+    appId: "1:881919211027:web:c7417fdea935e9b9bc71e6"
+};
+
+// Инициализация Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- КОНЕЦ КОНФИГА FIREBASE ---
+
+
+// 3. Загрузка данных
+document.addEventListener('DOMContentLoaded', async () => {
+    const tableBody = document.getElementById('results-body');
+    const loading = document.getElementById('loading');
+
+    try {
+        // Создаем запрос (q)
+        // Он сортирует по 'score' (по убыванию), а затем по 'timeSeconds' (по возрастанию)
+        // Это требует КОМПОЗИТНОГО ИНДЕКСА в Firebase (который вы уже создали)
+        const resultsRef = collection(db, "results");
+        const q = query(resultsRef, 
+            orderBy("score", "desc"), 
+            orderBy("timeSeconds", "asc")
+        );
+
+        // Выполняем запрос
+        const querySnapshot = await getDocs(q);
+
+        loading.style.display = 'none'; // Скрываем "Загрузка..."
         
-        <!-- Экран 1: Старт -->
-        <div id="start-screen" class="screen active">
-            <div class="header">
-                <img src="Coat_of_arms_of_Khakassia.svg.png" alt="Герб Хакасии" class="logo">
-                <h1>Знатоки Хакасии</h1>
-            </div>
+        if (querySnapshot.empty) {
+            loading.textContent = "Результатов пока нет.";
+            loading.style.display = 'block';
+            return;
+        }
 
-            <p>Приглашаем вас принять участие в захватывающей онлайн-викторине, посвящённой богатству и разнообразию традиционной хакасской культуры.</p>
-            <p>Хакасия – уникальный регион, бережно сохраняющий древнейшие традиции, оригинальные обычаи и особый национальный колорит. Проверьте свои знания, откройте для себя новые грани культурного наследия республики!</p>
-            <p class="rules">Принять участие в викторине могут ребята до 15 лет включительно. Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
-            <p class="rules"><strong>Желаем удачи!</strong></p>
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
             
-            <form id="user-form">
-                <div class="input-group">
-                    <label for="user-name">Ваше имя:</label>
-                    <input type="text" id="user-name" required>
-                </div>
-                <div class="input-group">
-                    <label for="user-age">Ваш возраст (до 15 лет):</label>
-                    <input type="number" id="user-age" required min="1" max="15">
-                </div>
-                
-                <!-- 
-                  ! НОВЫЕ ПОЛЯ 
-                -->
-                <div class="input-group">
-                    <label for="user-phone">Ваш телефон (для связи):</label>
-                    <input type="tel" id="user-phone" required>
-                </div>
-                <div class="input-group">
-                    <label for="user-address">Ваш адрес (населенный пункт):</label>
-                    <input type="text" id="user-address" required>
-                </div>
-                <!-- ! КОНЕЦ НОВЫХ ПОЛЕЙ -->
-
-                <button type="submit" class="btn" id="start-btn">Начать викторину</button>
-            </form>
-        </div>
-
-        <!-- Экран 2: Викторина -->
-        <div id="quiz-screen" class="screen">
-            <div class="quiz-header">
-                <div id="question-counter">Вопрос 1 / 30</div>
-                <div id="timer">00:00</div>
-            </div>
-            <h2 id="question-text"></h2>
-            <div id="options-container">
-                <!-- Кнопки с вариантами ответов будут здесь -->
-            </div>
-        </div>
-
-        <!-- Экран 3: Результаты -->
-        <div id="results-screen" class="screen">
-            <h2>Ваши результаты</h2>
-            <p>Поздравляем, <strong id="result-name"></strong>!</p>
-            <ul class="results-summary">
-                <li><strong>Возраст:</strong> <span id="result-age"></span> лет</li>
-                <li><strong>Правильные ответы:</strong> <span id="result-score"></span> из 30</li>
-                <li><strong>Затраченное время:</strong> <span id="result-time"></span></li>
-            </ul>
-            <p>Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
-            <button class="btn" id="restart-btn">Попробовать снова</button>
+            // Форматируем дату
+            const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString('ru-RU') : 'N/A';
             
-            <div class="leaderboard-note">
-                <p><strong>Примечание:</strong><br>
-                Ваш результат был успешно отправлен в базу данных.
-                </p>
-            </div>
-        </div>
-    </div>
+            // ! ОБНОВЛЕННАЯ СТРОКА ТАБЛИЦЫ
+            const row = `<tr>
+                <td>${data.name}</td>
+                <td>${data.age}</td>
+                <td>${data.phone || '---'}</td>
+                <td>${data.address || '---'}</td>
+                <td>${data.score}</td>
+                <td>${data.timeFormatted}</td>
+                <td>${date}</td>
+            </tr>`;
+            
+            tableBody.innerHTML += row;
+        });
 
-    <!-- Подключаем скрипт как модуль -->
-    <script type="module" src="script.js"></script>
-
-</body>
-</html>
+    } catch (error) {
+        console.error("Ошибка при загрузке результатов: ", error);
+        loading.textContent = "Ошибка при загрузке. Проверьте консоль (F12) и правила Firebase.";
+        
+        // Показываем ошибку про индекс, если она есть
+        if (error.code === 'failed-precondition') {
+             loading.innerHTML = `<b>Ошибка:</b> Отсутствует индекс Firebase.
+             <br>Перейдите в консоль Firebase -> Firestore -> Индексы и создайте его.
+             <br><small>${error.message}</small>`;
+        }
+    }
+});
