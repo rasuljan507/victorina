@@ -3,7 +3,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// Ваш конфиг (я убрал ненужный 'analytics' и 'measurementId')
+// Ваш конфиг (я вставил тот, что вы давали раньше)
 const firebaseConfig = {
     apiKey: "AIzaSyBvuOY_EZ_PyABGvLU9_5LcthFPkkF6nhE",
     authDomain: "victorina-7ef9b.firebaseapp.com",
@@ -11,13 +11,12 @@ const firebaseConfig = {
     storageBucket: "victorina-7ef9b.firebasestorage.app",
     messagingSenderId: "881919211027",
     appId: "1:881919211027:web:c7417fdea935e9b9bc71e6"
+    // measurementId вам не нужен
 };
 
 // Инициализируем Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// --- КОНЕЦ БЛОКА FIREBASE ---
-
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -177,11 +176,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+    document.addEventListener('DOMContentLoaded', () => {
+
     // Элементы DOM
     const screens = document.querySelectorAll('.screen');
     const startForm = document.getElementById('user-form');
+    
+    // Поля ввода
     const userNameInput = document.getElementById('user-name');
     const userAgeInput = document.getElementById('user-age');
+    const userPhoneInput = document.getElementById('user-phone');   // ! НОВОЕ
+    const userAddressInput = document.getElementById('user-address'); // ! НОВОЕ
+
+    // Элементы викторины
     const questionCounter = document.getElementById('question-counter');
     const timerDisplay = document.getElementById('timer');
     const questionText = document.getElementById('question-text');
@@ -198,8 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQuestionIndex = 0;
     let score = 0;
     let shuffledQuestions = [];
+    
+    // Переменные для данных пользователя
     let userName = "";
     let userAge = "";
+    let userPhone = "";   // ! НОВОЕ
+    let userAddress = ""; // ! НОВОЕ
+
     let timerInterval;
     let secondsElapsed = 0;
 
@@ -208,9 +220,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         userName = userNameInput.value;
         userAge = userAgeInput.value;
+        userPhone = userPhoneInput.value;     // ! НОВОЕ
+        userAddress = userAddressInput.value; // ! НОВОЕ
         
-        if (userName && userAge) {
+        // ! ОБНОВЛЕННАЯ ПРОВЕРКА
+        if (userName && userAge && userPhone && userAddress) {
             startGame();
+        } else {
+            // (Можно добавить сообщение об ошибке, но required и так не пропустит)
+            console.log("Заполните все поля");
         }
     });
 
@@ -222,8 +240,15 @@ document.addEventListener('DOMContentLoaded', () => {
         secondsElapsed = 0;
         userName = "";
         userAge = "";
+        userPhone = "";   // ! НОВОЕ
+        userAddress = ""; // ! НОВОЕ
+
+        // Очищаем поля
         userNameInput.value = "";
         userAgeInput.value = "";
+        userPhoneInput.value = "";   // ! НОВОЕ
+        userAddressInput.value = ""; // ! НОВОЕ
+
         clearInterval(timerInterval);
         
         // Показываем стартовый экран
@@ -231,19 +256,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function startGame() {
-        // Перемешиваем вопросы
         shuffledQuestions = questions.sort(() => Math.random() - 0.5);
         currentQuestionIndex = 0;
         score = 0;
         secondsElapsed = 0;
         
-        // Показываем экран викторины
         showScreen('quiz-screen');
-        
-        // Запускаем таймер
         startTimer();
-        
-        // Показываем первый вопрос
         showQuestion();
     }
 
@@ -269,22 +288,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showQuestion() {
-        // Очищаем предыдущие варианты
         optionsContainer.innerHTML = "";
         
-        // Получаем текущий вопрос
         const currentQuestion = shuffledQuestions[currentQuestionIndex];
         
-        // Отображаем текст вопроса и счетчик
         questionText.textContent = currentQuestion.question;
         questionCounter.textContent = `Вопрос ${currentQuestionIndex + 1} / ${shuffledQuestions.length}`;
         
-        // Создаем кнопки для вариантов ответов
         Object.entries(currentQuestion.options).forEach(([key, value]) => {
             const button = document.createElement('button');
             button.classList.add('option');
             button.textContent = value;
-            button.dataset.key = key; // Сохраняем ключ (a, b, c, d)
+            button.dataset.key = key;
             
             button.addEventListener('click', handleAnswerClick);
             optionsContainer.appendChild(button);
@@ -296,23 +311,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedAnswerKey = selectedButton.dataset.key;
         const correctAnswerKey = shuffledQuestions[currentQuestionIndex].correct;
 
-        // Блокируем все кнопки
         Array.from(optionsContainer.children).forEach(button => {
             button.disabled = true;
-            // Показываем правильный ответ
             if (button.dataset.key === correctAnswerKey) {
                 button.classList.add('correct');
             }
         });
 
-        // Проверяем ответ
         if (selectedAnswerKey === correctAnswerKey) {
             score++;
         } else {
             selectedButton.classList.add('incorrect');
         }
 
-        // Ждем 1 секунду и переходим к следующему вопросу или результатам
         setTimeout(() => {
             currentQuestionIndex++;
             if (currentQuestionIndex < shuffledQuestions.length) {
@@ -323,36 +334,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // --- ИЗМЕНЕННАЯ ФУНКЦИЯ (v9+ Модульный синтаксис) ---
     async function showResults() {
-        // Останавливаем таймер
         clearInterval(timerInterval);
-        
-        // Показываем экран результатов
         showScreen('results-screen');
         
         const finalTimeFormatted = formatTime(secondsElapsed);
         
-        // Заполняем данные на экране пользователя
         resultName.textContent = userName;
         resultAge.textContent = userAge;
         resultScore.textContent = `${score}`;
         resultTime.textContent = finalTimeFormatted;
 
-        // --- ОТПРАВКА В FIREBASE (v9+ Модульный синтаксис) ---
+        // --- ! ОБНОВЛЕННЫЙ БЛОК: ОТПРАВКА В FIREBASE ---
         try {
             const docRef = await addDoc(collection(db, "results"), {
                 name: userName,
-                age: parseInt(userAge), 
+                age: parseInt(userAge),
+                phone: userPhone,       // ! НОВОЕ
+                address: userAddress,   // ! НОВОЕ
                 score: score,
-                timeSeconds: secondsElapsed, 
+                timeSeconds: secondsElapsed,
                 timeFormatted: finalTimeFormatted,
-                timestamp: new Date() 
+                timestamp: new Date()
             });
             console.log("Результат сохранен в Firebase с ID: ", docRef.id);
         } catch (e) {
             console.error("Ошибка при отправке результата в Firebase: ", e);
         }
-        // --- КОНЕЦ БЛОКА ОТПРАВКИ ---
+        // --- КОНЕЦ ОБНОВЛЕННОГО БЛОКА ---
     }
 });
