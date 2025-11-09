@@ -1,7 +1,7 @@
 // --- ВАШ КОНФИГ FIREBASE (v9+ Модульный) ---
-// Импортируем все, что нужно для ЧТЕНИЯ данных
+// Импортируем только то, что нужно
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Ваш конфиг
 const firebaseConfig = {
@@ -13,50 +13,51 @@ const firebaseConfig = {
     appId: "1:881919211027:web:c7417fdea935e9b9bc71e6"
 };
 
-// Инициализируем Firebase
+// Инициализация Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// --- КОНЕЦ БЛОКА FIREBASE ---
+
+// --- КОНЕЦ КОНФИГА FIREBASE ---
 
 
-// --- ЛОГИКА ЗАГРУЗКИ РЕЗУЛЬТАТОВ (v9+ Модульный синтаксис) ---
+// 3. Загрузка данных
 document.addEventListener('DOMContentLoaded', async () => {
     const tableBody = document.getElementById('results-body');
     const loading = document.getElementById('loading');
-    const table = document.getElementById('results-table');
 
     try {
-        // 1. Создаем запрос к Firebase
-        const resultsQuery = query(
-            collection(db, "results"),
-            orderBy("score", "desc"),      // Сначала лучший счет
-            orderBy("timeSeconds", "asc")  // Потом быстрейшее время
+        // Создаем запрос (q)
+        // Он сортирует по 'score' (по убыванию), а затем по 'timeSeconds' (по возрастанию)
+        // Это требует КОМПОЗИТНОГО ИНДЕКСА в Firebase (который вы уже создали)
+        const resultsRef = collection(db, "results");
+        const q = query(resultsRef, 
+            orderBy("score", "desc"), 
+            orderBy("timeSeconds", "asc")
         );
 
-        // 2. Выполняем запрос
-        const querySnapshot = await getDocs(resultsQuery);
+        // Выполняем запрос
+        const querySnapshot = await getDocs(q);
 
-        // 3. Прячем загрузчик и показываем таблицу
-        loading.style.display = 'none';
-        table.style.display = 'table';
-
+        loading.style.display = 'none'; // Скрываем "Загрузка..."
+        
         if (querySnapshot.empty) {
             loading.textContent = "Результатов пока нет.";
             loading.style.display = 'block';
-            table.style.display = 'none';
             return;
         }
 
-        // 4. Строим таблицу
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Форматируем дату (она сохранилась как объект Timestamp)
+            // Форматируем дату
             const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString('ru-RU') : 'N/A';
             
+            // ! ОБНОВЛЕННАЯ СТРОКА ТАБЛИЦЫ
             const row = `<tr>
                 <td>${data.name}</td>
                 <td>${data.age}</td>
+                <td>${data.phone || '---'}</td>
+                <td>${data.address || '---'}</td>
                 <td>${data.score}</td>
                 <td>${data.timeFormatted}</td>
                 <td>${date}</td>
@@ -67,6 +68,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error("Ошибка при загрузке результатов: ", error);
-        loading.textContent = "Ошибка при загрузке. Проверьте консоль (F12) и правила безопасности Firebase.";
+        loading.textContent = "Ошибка при загрузке. Проверьте консоль (F12) и правила Firebase.";
+        
+        // Показываем ошибку про индекс, если она есть
+        if (error.code === 'failed-precondition') {
+             loading.innerHTML = `<b>Ошибка:</b> Отсутствует индекс Firebase.
+             <br>Перейдите в консоль Firebase -> Firestore -> Индексы и создайте его.
+             <br><small>${error.message}</small>`;
+        }
     }
 });
