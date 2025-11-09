@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Викторина: Знатоки Хакасии</title>
-    <!-- 
-      Я использую простой стиль (style.css), который мы выбрали.
-      Если вы назвали свой CSS-файл по-другому, поменяйте 'style.css'.
-    -->
     <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
@@ -17,17 +13,10 @@
         <!-- Экран 1: Старт -->
         <div id="start-screen" class="screen active">
             <div class="header">
-                <!-- 
-                  ! ИЗМЕНЕНИЕ:
-                  ! Теперь изображение загружается из локального файла.
-                  ! Убедитесь, что файл 'Coat_of_arms_of_Khakassia.svg.png' 
-                  ! загружен на GitHub в ту же папку, что и этот index.html
-                -->
                 <img src="Coat_of_arms_of_Khakassia.svg.png" alt="Герб Хакасии" class="logo">
                 <h1>Знатоки Хакасии</h1>
             </div>
 
-            <!-- Текст с вашего скриншота -->
             <p>Приглашаем вас принять участие в захватывающей онлайн-викторине, посвящённой богатству и разнообразию традиционной хакасской культуры.</p>
             <p>Хакасия – уникальный регион, бережно сохраняющий древнейшие традиции, оригинальные обычаи и особый национальный колорит. Проверьте свои знания, откройте для себя новые грани культурного наследия республики!</p>
             <p class="rules">Принять участие в викторине могут ребята до 15 лет включительно. Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
@@ -42,6 +31,20 @@
                     <label for="user-age">Ваш возраст (до 15 лет):</label>
                     <input type="number" id="user-age" required min="1" max="15">
                 </div>
+                
+                <!-- 
+                  ! НОВЫЕ ПОЛЯ 
+                -->
+                <div class="input-group">
+                    <label for="user-phone">Ваш телефон (для связи):</label>
+                    <input type="tel" id="user-phone" required>
+                </div>
+                <div class="input-group">
+                    <label for="user-address">Ваш адрес (населенный пункт):</label>
+                    <input type="text" id="user-address" required>
+                </div>
+                <!-- ! КОНЕЦ НОВЫХ ПОЛЕЙ -->
+
                 <button type="submit" class="btn" id="start-btn">Начать викторину</button>
             </form>
         </div>
@@ -70,7 +73,6 @@
             <p>Десять участников, которые правильно ответят на все вопросы и сделают это быстрее всех, получат памятные сувениры.</p>
             <button class="btn" id="restart-btn">Попробовать снова</button>
             
-            <!-- Заметка о бэкенде, которую можно удалить, но она полезна для вас -->
             <div class="leaderboard-note">
                 <p><strong>Примечание:</strong><br>
                 Ваш результат был успешно отправлен в базу данных.
@@ -79,12 +81,7 @@
         </div>
     </div>
 
-    <!-- 
-      !
-      ! ВОТ ИСПРАВЛЕНИЕ:
-      ! Я добавил type="module"
-      !
-    -->
+    <!-- Подключаем скрипт как модуль -->
     <script type="module" src="script.js"></script>
 
 </body>
