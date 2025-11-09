@@ -1,7 +1,8 @@
 // --- ВАШ КОНФИГ FIREBASE (v9+ Модульный) ---
 // Импортируем только то, что нужно
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// ! ДОБАВИЛ 'deleteDoc', 'writeBatch'
+import { getFirestore, collection, query, orderBy, getDocs, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // Ваш конфиг
 const firebaseConfig = {
@@ -21,9 +22,24 @@ const db = getFirestore(app);
 
 
 // 3. Загрузка данных
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
+    loadResults(); // ! Вынес загрузку в отдельную функцию
+
+    // ! НОВЫЙ ОБРАБОТЧИК КНОПКИ
+    const clearButton = document.getElementById('clear-data-btn');
+    clearButton.addEventListener('click', clearAllData);
+});
+
+
+// ! НОВАЯ ФУНКЦИЯ ЗАГРУЗКИ
+async function loadResults() {
     const tableBody = document.getElementById('results-body');
     const loading = document.getElementById('loading');
+    
+    // Очищаем таблицу перед загрузкой
+    tableBody.innerHTML = '';
+    loading.textContent = "Загрузка результатов...";
+    loading.style.display = 'block';
 
     try {
         // Создаем запрос (q)
@@ -77,4 +93,51 @@ document.addEventListener('DOMContentLoaded', async () => {
              <br><small>${error.message}</small>`;
         }
     }
-});
+}
+
+
+// ! НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ
+async function clearAllData() {
+    // ПЕРВАЯ ПРОВЕРКА
+    if (!confirm("ВЫ УВЕРЕНЫ?\n\nЭто действие удалит ВСЕ результаты викторины. Отменить это будет НЕВОЗМОЖНО.")) {
+        return;
+    }
+
+    // ВТОРАЯ ПРОВЕРКА
+    if (!confirm("ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ:\n\nТочно удалить все данные?")) {
+        return;
+    }
+
+    const loading = document.getElementById('loading');
+    loading.textContent = "Удаление данных...";
+    loading.style.display = 'block';
+
+    try {
+        const resultsRef = collection(db, "results");
+        const querySnapshot = await getDocs(resultsRef);
+        
+        if (querySnapshot.empty) {
+            loading.textContent = "Данных для удаления нет.";
+            return;
+        }
+
+        // Используем 'batch' (пакет) для удаления всех документов одним махом
+        const batch = writeBatch(db);
+        querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref); // Добавляем удаление в "пакет"
+        });
+
+        await batch.commit(); // Отправляем "пакет" на выполнение
+
+        loading.textContent = "Все данные успешно удалены.";
+        console.log("Все результаты удалены.");
+        
+        // Перезагружаем список
+        loadResults();
+
+    } catch (error) {
+        console.error("Ошибка при удалении данных: ", error);
+        loading.textContent = "Ошибка при удалении. Проверьте правила Firebase (нужно 'delete').";
+        alert("Ошибка при удалении. Убедитесь, что в правилах Firebase разрешено 'delete'.");
+    }
+}
