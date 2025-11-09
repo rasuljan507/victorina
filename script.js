@@ -218,7 +218,22 @@ const db = getFirestore(app);
         e.preventDefault();
         userName = userNameInput.value;
         userAge = userAgeInput.value;
-        userPhone = userPhoneInput.value;     // ! НОВОЕ
+        
+        // --- ! НОВОЕ ФОРМАТИРОВАНИЕ НОМЕРА ---
+        let rawPhone = userPhoneInput.value.replace(/[\s\-()]/g, ''); // Убираем мусор (скобки, тире)
+        
+        if (rawPhone.startsWith('8')) {
+            // Заменяем 8 (Россия) на +7
+            userPhone = '+7' + rawPhone.substring(1);
+        } else if (rawPhone.startsWith('+7')) {
+            // Уже в правильном формате
+            userPhone = rawPhone;
+        } else {
+            // Добавляем +7, если его нет (для номеров РФ/KZ)
+            userPhone = '+7' + rawPhone;
+        }
+        // --- ! КОНЕЦ ФОРМАТИРОВАНИЯ ---
+
         userAddress = userAddressInput.value; // ! НОВОЕ
         
         // ! ОБНОВЛЕННАЯ ПРОВЕРКА
