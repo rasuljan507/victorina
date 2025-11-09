@@ -18,8 +18,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener('DOMContentLoaded', () => {
-
     // !!! ВНИМАНИЕ !!!
     // Укажите правильные ответы для каждого вопроса,
     // используя ключ ('a', 'b', 'c', 'd').
@@ -176,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
 
     // Элементы DOM
     const screens = document.querySelectorAll('.screen');
