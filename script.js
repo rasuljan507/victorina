@@ -185,6 +185,7 @@ const db = getFirestore(app);
     const userAgeInput = document.getElementById('user-age');
     const userPhoneInput = document.getElementById('user-phone');   // ! НОВОЕ
     const userAddressInput = document.getElementById('user-address'); // ! НОВОЕ
+    const consentCheckbox = document.getElementById('consent-checkbox'); // ! НОВАЯ ГАЛОЧКА
 
     // Элементы викторины
     const questionCounter = document.getElementById('question-counter');
@@ -235,10 +236,15 @@ const db = getFirestore(app);
         // --- ! КОНЕЦ ФОРМАТИРОВАНИЯ ---
 
         userAddress = userAddressInput.value; // ! НОВОЕ
+        const isConsentChecked = consentCheckbox.checked; // ! НОВАЯ ПРОВЕРКА
         
         // ! ОБНОВЛЕННАЯ ПРОВЕРКА
-        if (userName && userAge && userPhone && userAddress) {
+        if (userName && userAge && userPhone && userAddress && isConsentChecked) {
             startGame();
+        } else if (!isConsentChecked) {
+            // Можно будет сюда добавить кастомное сообщение,
+            // но `required` в HTML и так должен остановить отправку.
+            console.log("Нужно согласие на обработку данных");
         } else {
             // (Можно добавить сообщение об ошибке, но required и так не пропустит)
             console.log("Заполните все поля");
@@ -255,6 +261,7 @@ const db = getFirestore(app);
         userAge = "";
         userPhone = "";   // ! НОВОЕ
         userAddress = ""; // ! НОВОЕ
+        consentCheckbox.checked = false; // ! СБРОС ГАЛОЧКИ
 
         // Очищаем поля
         userNameInput.value = "";
