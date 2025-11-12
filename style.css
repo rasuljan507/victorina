@@ -265,3 +265,30 @@ h1 {
     padding: 10px;
     border-radius: 5px;
 }
+
+/* * ! НОВЫЙ СТИЛЬ ДЛЯ ГАЛОЧКИ СОГЛАСИЯ
+ */
+.consent-group {
+    display: flex;
+    align-items: flex-start; /* Выравниваем по верху, если текст в несколько строк */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background-color: #fdfaf2; /* Тот же фон, что у правил */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.consent-group input[type="checkbox"] {
+    /* Увеличиваем саму галочку */
+    transform: scale(1.4);
+    margin-top: 5px; /* Немного опускаем, чтобы было по центру с первой строкой */
+    margin-right: 12px;
+    flex-shrink: 0; /* Чтобы галочка не сжималась */
+}
+
+.consent-group label {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+}
